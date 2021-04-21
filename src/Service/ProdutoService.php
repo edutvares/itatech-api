@@ -32,10 +32,24 @@ final class ProdutoService extends ConexaoBanco
         return false;
     }
 
-    public function delete($id) {
+    public function delete(int $id) {
         $sql = $this->pdo->prepare('DELETE FROM produto WHERE id = :id');
 
-        $resposta = $sql->execute(array('id' => $id));
+        $resposta = $sql->execute(['id' => $id]);
+
+        return $resposta;
+    }
+
+    public function update(Produto $produto) {
+        $sql = $this->pdo->prepare('UPDATE produto 
+                                    SET nome = :nome,  preco = :preco
+                                    WHERE id = :id');
+
+        $resposta = $sql->execute([
+            'id'    =>  $produto->id,
+            'nome'  =>  $produto->nome,
+            'preco' =>  $produto->preco
+        ]);
 
         return $resposta;
     }

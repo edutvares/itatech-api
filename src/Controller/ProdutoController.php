@@ -65,12 +65,34 @@ final class ProdutoController
         $idProduto = $request->getAttribute('id');
 
         $res = $this->produtoService->delete($idProduto);
-        
-        return $response->withJson([ "res" => $res ]);
 
-        /* if($res)
+        if($res)
             return $response->withJson([ "message" => "Produto deletado com sucesso" ]);
         else
-            return $response->withJson([ "Erro" => "Não foi possível deletar o produto" ]); */
+            return $response->withJson([ "error" => "Erro: Não foi possível deletar o produto" ]);
+    }
+
+    public function update(Request $request, Response $response, array $args) 
+    {
+
+        $data = $request->getParsedBody();
+
+        if(!isset($data['nome']) || !isset($data['preco'])) {
+            return $response->withJson([ "error" => "Erro: Envie o objeto completo" ]);
+        }
+
+        $produto = new Produto();
+
+        $produto->id = $request->getAttribute('id');
+        $produto->nome = $data['nome'];
+        $produto->preco = $data['preco'];
+        
+        $res = $this->produtoService->update($produto);
+
+        if($res)
+            return $response->withJson([ "message" => "Produto atualizado com sucesso" ]);
+        else
+            return $response->withJson([ "error" => "Erro: Não foi possível atualizar o produto" ]);
+    
     }
 }
