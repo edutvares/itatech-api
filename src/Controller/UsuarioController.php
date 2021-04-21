@@ -67,7 +67,6 @@ final class UsuarioController
 
         $usuario->id = $request->getAttribute('id');
         $usuario->nome = $data['nome'];
-        $usuario->preco = $data['preco'];
         
         $res = $this->usuarioService->update($usuario);
 
