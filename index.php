@@ -7,7 +7,12 @@ use \Psr\Http\Message\ResponseInterface as Response;
 use src\Controller\{
     ProdutoController,
     UsuarioController,
-    VendaController
+    VendaController,
+    AuthController
+};
+
+use src\Middleware\{
+    AuthMiddleware,
 };
 
 // Exibir mensagens de erro detalhadamente
@@ -39,7 +44,7 @@ $app->add(function ($req, $res, $next) {
     a função obterTodos em src > Controller > ProdutoController
     Atenção aos ':' antes do nome da função!
 */
-$app->get('/produto', ProdutoController::class.':obterTodos');
+$app->get('/produto', ProdutoController::class.':obterTodos')->add(AuthMiddleware::class.':login');
 $app->post('/produto', ProdutoController::class.':inserir');
 $app->put('/produto/{id}', ProdutoController::class.':update');
 $app->delete('/produto/{id}', ProdutoController::class.':delete');
@@ -60,6 +65,12 @@ $app->get('/venda', VendaController::class.':obterTodos');
 $app->post('/venda', VendaController::class.':inserir');
 $app->put('/venda/{id}', VendaController::class.':update');
 $app->delete('/venda/{id}', VendaController::class.':delete');
+
+$app->post('/adm/init', AuthController::class.':admInit');
+$app->get('/gerente', AuthController::class.':obterTodos');
+$app->post('/gerente', AuthController::class.':inserir');//authMiddleware
+//$app->put('/venda/{id}', VendaController::class.':update');
+//$app->delete('/venda/{id}', VendaController::class.':delete');
 
 // Catch-all route to serve a 404 Not Found page if none of the routes match
 // NOTE: make sure this route is defined last
