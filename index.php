@@ -19,6 +19,20 @@ $configuration = [
 $config = new \Slim\Container($configuration);
 $app = new \Slim\App($config);
 
+//Rota de configuração de CORS
+$app->options('/{routes:.+}', function ($request, $response, $args) {
+    return $response;
+});
+
+//Middleware para dicionar cabeçalhos CORS
+$app->add(function ($req, $res, $next) {
+    $response = $next($req, $res);
+    return $response
+            ->withHeader('Access-Control-Allow-Origin', 'http://mysite')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+});
+
 /*
     Antes lidávamos com a requisição aqui, porém agora chamamos uma função da 
     classe ProtudoController para lidar com a requisição para nós. Você encontrará
@@ -46,6 +60,13 @@ $app->get('/venda', VendaController::class.':obterTodos');
 $app->post('/venda', VendaController::class.':inserir');
 $app->put('/venda/{id}', VendaController::class.':update');
 $app->delete('/venda/{id}', VendaController::class.':delete');
+
+// Catch-all route to serve a 404 Not Found page if none of the routes match
+// NOTE: make sure this route is defined last
+$app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function($req, $res) {
+    $handler = $this->notFoundHandler; // handle using the default Slim page not found handler
+    return $handler($req, $res);
+});
 
 $app->run();
 
