@@ -8,11 +8,8 @@ use src\Controller\{
     ProdutoController,
     UsuarioController,
     VendaController,
-    AuthController
-};
-
-use src\Middleware\{
-    AuthMiddleware,
+    AuthController,
+    ManagerController
 };
 
 // Exibir mensagens de erro detalhadamente
@@ -38,13 +35,23 @@ $app->add(function ($req, $res, $next) {
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 });
 
+$app->add(new Tuupola\Middleware\JwtAuthentication([
+    "header" => "X-token",
+    "regexp" => "/(.*)/",
+    "path" => "/*",
+    "ignore" => ["/login", "/adm/init", "/produto/todos"],
+    "secret" => "560b9343a9630ca31dbb0df73d6890ab"
+]));
+
+//->add(AuthMiddleware::class.':login')
+
 /*
     Antes lidávamos com a requisição aqui, porém agora chamamos uma função da 
     classe ProtudoController para lidar com a requisição para nós. Você encontrará
     a função obterTodos em src > Controller > ProdutoController
     Atenção aos ':' antes do nome da função!
 */
-$app->get('/produto', ProdutoController::class.':obterTodos')->add(AuthMiddleware::class.':login');
+$app->get('/produto/todos', ProdutoController::class.':obterTodos');
 $app->post('/produto', ProdutoController::class.':inserir');
 $app->put('/produto/{id}', ProdutoController::class.':update');
 $app->delete('/produto/{id}', ProdutoController::class.':delete');
@@ -67,10 +74,11 @@ $app->put('/venda/{id}', VendaController::class.':update');
 $app->delete('/venda/{id}', VendaController::class.':delete');
 
 $app->post('/adm/init', AuthController::class.':admInit');
-$app->get('/gerente', AuthController::class.':obterTodos');
-$app->post('/gerente', AuthController::class.':inserir');//authMiddleware
-//$app->put('/venda/{id}', VendaController::class.':update');
-//$app->delete('/venda/{id}', VendaController::class.':delete');
+$app->post('/login', AuthController::class.':login');
+
+$app->get('/gerente', ManagerController::class.':obterTodos');
+$app->post('/gerente', ManagerController::class.':inserir');
+$app->delete('/gerente/{id}', ManagerController::class.':delete');
 
 // Catch-all route to serve a 404 Not Found page if none of the routes match
 // NOTE: make sure this route is defined last

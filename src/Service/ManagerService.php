@@ -4,13 +4,23 @@ namespace src\Service;
 use src\Model\Manager;
 use src\Service\ConexaoBanco;
 
-final class AuthService extends ConexaoBanco
+final class ManagerService extends ConexaoBanco
 {
 
     public function obterTodos()
     {
         $managers = $this->pdo->query('SELECT * FROM manager')->fetchAll(\PDO::FETCH_ASSOC);
         return $managers;
+    }
+
+    public function obterPorEmail($email) {
+        $stmt = $this->pdo->prepare('SELECT * FROM manager WHERE email = :email');
+        
+
+        $stmt->bindValue(':email', $email);
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function inserir(Manager $manager)
@@ -27,6 +37,14 @@ final class AuthService extends ConexaoBanco
             return true;
         }
         return false;
+    }
+
+    public function delete(int $id) {
+        $sql = $this->pdo->prepare('DELETE FROM manager WHERE id = :id');
+
+        $resposta = $sql->execute(['id' => $id]);
+
+        return $resposta;
     }
 
 }

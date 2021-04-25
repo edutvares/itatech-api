@@ -1,7 +1,9 @@
 {
     "name": "itatechjr/loja",
     "require": {
-        "slim/slim": "3.*"
+        "slim/slim": "3.*",
+        "firebase/php-jwt": "^5.2",
+        "tuupola/slim-jwt-auth": "^3.5"
     },
     "autoload":{
         "psr-4": {
