@@ -2,6 +2,15 @@
 
 Esta API é organizada em torno do REST. Essa API aceita corpos de solicitação em JSON, retorna respostas codificadas por JSON e usa códigos de resposta HTTP padrão, autenticação e verbos.
 
+## Índice
+
+* [Autenticação](https://github.com/edutvares/itatech-api#autentica%C3%A7%C3%A3o)
+* [Endpoints](https://github.com/edutvares/itatech-api#endpoints)
+* [Operações em gerentes](https://github.com/edutvares/itatech-api#opera%C3%A7%C3%B5es-em-gerentes)
+* [Operações em produtos](https://github.com/edutvares/itatech-api#opera%C3%A7%C3%B5es-em-produtos)
+* [Operações em usuários](https://github.com/edutvares/itatech-api#opera%C3%A7%C3%B5es-em-usu%C3%A1rios)
+* [Operações em vendas](https://github.com/edutvares/itatech-api#opera%C3%A7%C3%B5es-em-vendas)
+
 ## Autenticação
 
 Esta API usa tokens JWT para autenticar solicitações.
