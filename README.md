@@ -1,6 +1,6 @@
 # Referência API
 
-Esta API é organizada em torno do REST. Essa API aceita corpos de solicitação em JSON, retorna respostas codificadas por JSON e usa códigos de resposta HTTP padrão, autenticação e verbos.
+Esta API é organizada em torno do REST. Essa API aceita corpos de solicitação em JSON, retorna respostas codificadas por JSON e usa códigos de resposta HTTP padrão e autenticação.
 
 ## Índice
 
