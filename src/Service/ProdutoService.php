@@ -20,6 +20,16 @@ final class ProdutoService extends ConexaoBanco
         return $produtos;
     }
 
+    public function obterPorId(int $id) {
+        $stmt = $this->pdo->prepare('SELECT * FROM produto WHERE id = :id LIMIT 1');
+        
+
+        $stmt->bindValue(':id', $id);
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     public function inserir(Produto $produto)
     {
         $sql = $this->pdo->prepare('INSERT INTO produto VALUES (DEFAULT, :nome, :preco)');

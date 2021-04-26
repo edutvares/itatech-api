@@ -42,7 +42,7 @@ final class AuthController
 
         $this->authService->inserir($novoGerente);
 
-        return $response->withJson([ "message" => "Gerente cadastrado com sucesso!" ]);
+        return $response->withJson([ "message" => "Gerente cadastrado com sucesso!" ], 201);
     }
 
     public function login(Request $request, Response $response, array $args) {
@@ -65,7 +65,7 @@ final class AuthController
             return $response->withJson(['error' => "Erro: Usuario ou senha inválidos"]);
         }
 
-        $key = "560b9343a9630ca31dbb0df73d6890ab";
+        $key = $_ENV['SECRET_KEY'];
         $payload = array(
             "id"    => $manager[0]['id'],
             "nome"  => $manager[0]['nome'],

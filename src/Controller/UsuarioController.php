@@ -33,18 +33,30 @@ final class UsuarioController
             return $response->withJson([ "error" => "Erro: O nome está vazio." ]);
         }
 
+        $pesquisaBanco = $this->usuarioService->obterPorNome($data['nome']);
+
+        if(isset($pesquisaBanco[0])) {
+            return $response->withJson([ "error" => "Erro: Esse usuário já foi cadastrado." ]);
+        }
+
         $novoUsuario = new Usuario();
 
         $novoUsuario->nome = $data['nome'];
 
         $this->usuarioService->inserir($novoUsuario);
 
-        return $response->withJson([ "message" => "Usuario cadastrado com sucesso!" ]);
+        return $response->withJson([ "message" => "Usuario cadastrado com sucesso!" ], 201);
     }
 
     public function delete(Request $request, Response $response, array $args) 
     {
         $idUsuario = $request->getAttribute('id');
+
+        $pesquisaBanco = $this->usuarioService->obterPorId($idUsuario);
+
+        if(!isset($pesquisaBanco[0])) {
+            return $response->withJson([ "error" => "Erro: O id informado não corresponde a nenhum usuário cadastrado" ]);
+        }
 
         $res = $this->usuarioService->delete($idUsuario);
 
@@ -58,14 +70,21 @@ final class UsuarioController
     {
 
         $data = $request->getParsedBody();
+        $idUsuario = $request->getAttribute('id');
 
-        if(!isset($data['nome'])) {
-            return $response->withJson([ "error" => "Erro: o novo nome não foi informado." ]);
+        if(!isset($data['nome']) || !isset($idUsuario)) {
+            return $response->withJson([ "error" => "Erro: Nome ou id não informados." ]);
+        }
+
+        $pesquisaBanco = $this->usuarioService->obterPorId($idUsuario);
+
+        if(!isset($pesquisaBanco[0])) {
+            return $response->withJson([ "error" => "Erro: O id informado não corresponde a nenhum usuário cadastrado" ]);
         }
 
         $usuario = new Usuario();
 
-        $usuario->id = $request->getAttribute('id');
+        $usuario->id = $idUsuario;
         $usuario->nome = $data['nome'];
         
         $res = $this->usuarioService->update($usuario);

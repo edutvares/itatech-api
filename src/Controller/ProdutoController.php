@@ -57,12 +57,18 @@ final class ProdutoController
 
         $this->produtoService->inserir($novoProduto);
 
-        return $response->withJson([ "message" => "Produto cadastrado com sucesso!" ]);
+        return $response->withJson([ "message" => "Produto cadastrado com sucesso!" ], 201);
     }
 
     public function delete(Request $request, Response $response, array $args) 
     {
         $idProduto = $request->getAttribute('id');
+
+        $pesquisaBanco = $this->produtoService->obterPorId($idProduto);
+
+        if(!isset($pesquisaBanco[0])) {
+            return $response->withJson([ "error" => "Erro: O id informado não corresponde a nenhum produto cadastrado" ]);
+        }
 
         $res = $this->produtoService->delete($idProduto);
 
@@ -76,14 +82,21 @@ final class ProdutoController
     {
 
         $data = $request->getParsedBody();
+        $idProduto = $request->getAttribute('id');
 
         if(!isset($data['nome']) || !isset($data['preco'])) {
             return $response->withJson([ "error" => "Erro: Envie o objeto completo" ]);
         }
 
+        $pesquisaBanco = $this->produtoService->obterPorId($idProduto);
+
+        if(!isset($pesquisaBanco[0])) {
+            return $response->withJson([ "error" => "Erro: O id informado não corresponde a nenhum produto cadastrado" ]);
+        }
+
         $produto = new Produto();
 
-        $produto->id = $request->getAttribute('id');
+        $produto->id = $idProduto;
         $produto->nome = $data['nome'];
         $produto->preco = $data['preco'];
         

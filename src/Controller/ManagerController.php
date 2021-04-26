@@ -33,6 +33,12 @@ final class ManagerController
             return $response->withJson([ "error" => "Erro: Algum campo não foi preenchido." ]);
         }
 
+        $pesquisaBanco = $this->managerService->obterPorEmail($data['email']);
+
+        if(isset($pesquisaBanco[0])) {
+            return $response->withJson([ "error" => "Erro: Esse e-mail já foi cadastrado." ]);
+        }
+
         $novoGerente = new Manager();
 
         $novoGerente->nome = $data['nome'];
@@ -41,12 +47,22 @@ final class ManagerController
 
         $this->managerService->inserir($novoGerente);
 
-        return $response->withJson([ "message" => "Gerente cadastrado com sucesso!" ]);
+        return $response->withJson([ "message" => "Gerente cadastrado com sucesso!" ], 201);
     }
 
     public function delete(Request $request, Response $response, array $args) 
     {
         $idGerente = $request->getAttribute('id');
+
+        if(!isset($idGerente)) {
+            return $response->withJson([ "error" => "Erro: O ID não foi informado" ]);
+        }
+
+        $pesquisaBanco = $this->managerService->obterPorId($idGerente);
+
+        if(!isset($pesquisaBanco[0])) {
+            return $response->withJson([ "error" => "Erro: O id informado não corresponde a nenhum gerente cadastrado" ]);
+        }
 
         $res = $this->managerService->delete($idGerente);
 

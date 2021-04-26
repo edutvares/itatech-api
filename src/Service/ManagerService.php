@@ -13,8 +13,18 @@ final class ManagerService extends ConexaoBanco
         return $managers;
     }
 
+    public function obterPorId($id) {
+        $stmt = $this->pdo->prepare('SELECT * FROM manager WHERE id = :id LIMIT 1');
+        
+
+        $stmt->bindValue(':id', $id);
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     public function obterPorEmail($email) {
-        $stmt = $this->pdo->prepare('SELECT * FROM manager WHERE email = :email');
+        $stmt = $this->pdo->prepare('SELECT * FROM manager WHERE email = :email LIMIT 1');
         
 
         $stmt->bindValue(':email', $email);

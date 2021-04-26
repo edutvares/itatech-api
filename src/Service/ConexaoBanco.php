@@ -9,11 +9,11 @@ abstract class ConexaoBanco
     public function __construct()
     {
         try{
-            $host = 'localhost';
-            $port = 3306;
-            $user = 'root'; //Padrão é root
-            $pass = ''; //Padrão é vazio
-            $dbname = 'db_loja';
+            $host = $_ENV['HOST'];
+            $port = $_ENV['PORT'];
+            $user = $_ENV['USER']; //Padrão é root
+            $pass = $_ENV['PASS']; //Padrão é vazio
+            $dbname = $_ENV['DB_NAME'];
             $dsn = "mysql:host={$host};dbname={$dbname};port={$port};";
             $this->pdo = new \PDO($dsn, $user, $pass);
             $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);

@@ -14,6 +14,26 @@ final class UsuarioService extends ConexaoBanco
         return $usuarios;
     }
 
+    public function obterPorId(int $id) {
+        $stmt = $this->pdo->prepare('SELECT * FROM usuario WHERE id = :id LIMIT 1');
+        
+
+        $stmt->bindValue(':id', $id);
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function obterPorNome($nome) {
+        $stmt = $this->pdo->prepare('SELECT * FROM usuario WHERE nome = :nome LIMIT 1');
+        
+
+        $stmt->bindValue(':nome', $nome);
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     public function inserir(Usuario $usuario)
     {
         $sql = $this->pdo->prepare('INSERT INTO usuario VALUES (DEFAULT, :nome)');

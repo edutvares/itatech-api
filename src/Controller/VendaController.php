@@ -38,14 +38,26 @@ final class VendaController
         $novaVenda->idUsuario = $data['id_usuario'];
         $novaVenda->idProduto = $data['id_produto'];
 
-        $this->vendaService->inserir($novaVenda);
+        try {
+            $this->vendaService->inserir($novaVenda);
+            return $response->withJson([ "message" => "Venda cadastrada com sucesso!" ], 201);
+        } catch (\Throwable $th) {
+            return $response->withJson([ "error" => "Erro: Não foi possível cadastrar essa venda. Os dados passados são inválidos" ]);
+        }
+        
 
-        return $response->withJson([ "message" => "Venda cadastrada com sucesso!" ]);
+        
     }
 
     public function delete(Request $request, Response $response, array $args) 
     {
         $idVenda = $request->getAttribute('id');
+
+        $pesquisaBanco = $this->vendaService->obterPorId($idVenda);
+
+        if(!isset($pesquisaBanco[0])) {
+            return $response->withJson([ "error" => "Erro: O id informado não corresponde a nenhuma venda cadastrada" ]);
+        }
 
         $res = $this->vendaService->delete($idVenda);
 
@@ -59,23 +71,29 @@ final class VendaController
     {
 
         $data = $request->getParsedBody();
+        $idVenda = $request->getAttribute('id');
 
-        if(!isset($data['id_usuario']) || !isset($data['id_produto'])) {
-            return $response->withJson([ "error" => "Erro: Usuario ou produto não informado." ]);
+        if(!isset($data['id_usuario']) || !isset($data['id_produto']) || !isset($idVenda)) {
+            return $response->withJson([ "error" => "Erro: Usuario, produto ou ID não informado." ]);
+        }
+
+        $pesquisaBanco = $this->vendaService->obterPorId($idVenda);
+
+        if(!isset($pesquisaBanco[0])) {
+            return $response->withJson([ "error" => "Erro: O id informado não corresponde a nenhuma venda cadastrada" ]);
         }
 
         $venda = new Venda();
 
-        $venda->id = $request->getAttribute('id');
+        $venda->id = $idVenda;
         $venda->idUsuario = $data['id_usuario'];
         $venda->idProduto = $data['id_produto'];
-        
-        $res = $this->vendaService->update($venda);
 
-        if($res)
+        try {
+            $res = $this->vendaService->update($venda);
             return $response->withJson([ "message" => "Venda atualizada com sucesso" ]);
-        else
-            return $response->withJson([ "error" => "Erro: Não foi possível atualizar a venda" ]);
-    
+        } catch (\Throwable $th) {
+            return $response->withJson([ "error" => "Erro: Não foi possível atualizar a venda. Os dados passados são inválidos" ]);
+        }
     }
 }

@@ -12,6 +12,9 @@ use src\Controller\{
     ManagerController
 };
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 // Exibir mensagens de erro detalhadamente
 $configuration = [
     'settings' => [
@@ -40,7 +43,7 @@ $app->add(new Tuupola\Middleware\JwtAuthentication([
     "regexp" => "/(.*)/",
     "path" => "/*",
     "ignore" => ["/login", "/adm/init", "/produto/todos"],
-    "secret" => "560b9343a9630ca31dbb0df73d6890ab"
+    "secret" => $_ENV['SECRET_KEY']
 ]));
 
 //->add(AuthMiddleware::class.':login')
@@ -83,8 +86,7 @@ $app->delete('/gerente/{id}', ManagerController::class.':delete');
 // Catch-all route to serve a 404 Not Found page if none of the routes match
 // NOTE: make sure this route is defined last
 $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function($req, $res) {
-    $handler = $this->notFoundHandler; // handle using the default Slim page not found handler
-    return $handler($req, $res);
+    return $res->withJson(["error" => "Erro: Parametros de requisição inválidos"]);
 });
 
 $app->run();

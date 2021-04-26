@@ -23,6 +23,27 @@ final class VendaService extends ConexaoBanco
         return $vendas;
     }
 
+    public function obterPorId(int $id) {
+        $stmt = $this->pdo->prepare('SELECT 
+                                        venda.id, 
+                                        venda.id_produto,
+                                        produto.nome AS produto_nome, 
+                                        produto.preco AS produto_preco, 
+                                        venda.id_usuario,
+                                        usuario.nome AS usuario_nome 
+                                    FROM venda 
+                                    INNER JOIN produto ON (produto.id = venda.id_produto) 
+                                    INNER JOIN usuario on (usuario.id = venda.id_usuario)
+                                    WHERE venda.id = :id 
+                                    LIMIT 1');
+        
+
+        $stmt->bindValue(':id', $id);
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     public function inserir(Venda $venda)
     {
         $sql = $this->pdo->prepare('INSERT INTO venda VALUES (DEFAULT, :id_usuario, :id_produto)');
